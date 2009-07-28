@@ -1,0 +1,129 @@
+=== 0.1-NOT Released ===
+2009.07.28 Hector Zhao <zhaobt@nimte.ac.cn>
+	* minet (minet.py) works fine except query.
+    * minet-gui not updated yet.
+
+=== 1.3-1 ===
+2009.02.11 Wenbo Yang <http://solrex.cn>
+	* NEWS: Version 1.3-1 released. Bug fix version.
+
+2009.02.11 Wenbo Yang <http://solrex.cn>
+	* Added some maintain scripts.
+	* Changed directories structure, as bellow:
+	.
+	|-- ChangeLog
+	|-- Makefile
+	|-- README_CN.GBK.txt
+	|-- README_CN.UTF8.txt
+	|-- licence.txt
+	|-- maintain
+	|   |-- debian
+	|   |   |-- control
+	|   |   `-- release.sh
+	|   |-- redhat
+	|   |   |-- casnet.spec
+	|   |   `-- release.sh
+	|   |-- src
+	|   `-- win
+	|       |-- casnet.nsi
+	|       |-- release.bat
+	|       `-- setup_4_py2exe.py
+	|-- misc
+	|   `-- casnet.desktop
+	`-- src
+	|-- casnet-gui.py
+	|-- casnet-gui.vbe
+	|-- casnet.py
+	|-- casnet_ascii.py
+	|-- casnetconf.py
+	`-- pics
+		|-- casnet.ico
+		|-- casnet.png
+		|-- offline.png
+		|-- online.ico
+		`-- online.png
+
+
+=== 1.3-0 ===
+2009.02.09 Wenbo Yang <http://solrex.cn>
+	* NEWS: Version 1.3-0 released.
+
+	* casnetconf.py: Added 2 domain in account file for 2 new options.
+	* casnet.py: Changed output format, Added default forceoff action,
+	    Marked duplicated requests as success return.
+	* casnet-gui.py: Removed annoying dialog boxes when no error happens,
+	    Added online mode changing, auto reconnecting, remind 
+		insufficient balance support, Fixed Issue 6.
+
+
+=== 1.2-2 ===
+2008.06.13 Wenbo Yang <http://solrex.cn>
+	* NEWS: Version 1.2-2 released.
+
+	* casnetconf.py,
+	* casnet-gui.py: Fixed Chinese directory name bug in Windows, Issue 4.
+	* casnet.py: Added socket exception handler.
+	* casnet-gui.py: Reduced code size, fixed account domain bug, Issue 3,
+	    Fixed duplicated online warning report bug related to GUI.
+
+=== 1.2-1 ===
+2008.06.07 Wenbo Yang <http://solrex.cn>
+	* NEWS: Version 1.2-1 released.
+
+	* casnet.py: Added account locked case, fixed some bugs.
+	* casnetconf.py,
+	* casnet-gui.py: Added windows system support.
+	* casnet-gui.vbe: Added file, windows program starter.
+	* setup_4_py2exe.py: Added file, windows exe file generator for py2exe.
+	* pics/casnet.ico,
+	* pics/online.ico: Added file, windows icon file for program.
+	* README: Removed file, useless english README.
+	* README_CN.GBK -> README_CN.GBK.txt,
+	* README_CN.UTF8 -> README_CN.UTF8.txt: Changed file extension.
+
+=== 1.1-1 ===
+2008.05.09 Wenbo Yang <http://solrex.cn>
+	
+	* NEWS: Version 1.1-1 released.
+
+	* casnet-gui.py: Added forceoff action if online at other IP.
+					 Added click close button to hide feature.
+					 Added trayicon(StatusIcon) right click menu.
+
+=== 1.0-2 ===
+2008.04.05 Wenbo Yang <http://solrex.cn>
+
+	* NEWS: Version 1.0-2 released, with .deb and .rpm format.
+
+	* install.sh: Change file access permissions.
+	* README,
+	* README_CN.UTF8,
+	* README_CN.GBK: Add bug list URL.
+
+=== 1.0 ===
+2008.04.03 Wenbo Yang <http://solrex.cn>
+
+	* NEWS: Version 1.0 released.
+
+	* casnetconf.py: Complete the conf module.
+	* casnet.py: Complete the CLI module.
+	* casnet-gui.py: Complete the GUI module.
+	* pics/casnet.png,
+	* pics/online.png,
+	* pics/offline.png: Add trayicons from lee's <flyli3415@gmail.com> kagent
+	software. Thanks!
+	* casnet.desktop: Complete casnet's menu item configuration file.
+	* install.sh: Complete install script.
+	* uninstall.sh: Complete uninstall script.
+	* README,
+	* README_CN.UTF8,
+	* README_CN.GBK: Add readme file.
+
+=== 1.0 Pre ===
+2008.04.01 Wenbo Yang <http://solrex.cn>
+
+	* NEWS: Fools' Day, a joking 1.0 pre release.
+
+2008.03.31 Wenbo Yang <http://solrex.cn>
+
+	* casnet-gui.py: Draw the initial GUI interface. 

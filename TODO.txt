@@ -1,0 +1,11 @@
+TODO:
+
+http://192.168.254.110
+
+   /page/selfservice/login.jsp
+
+JSESSIONID={ 32 digits hex }
+
+images ?
+
+   /selflogin.do POST:{ loginName password rand }

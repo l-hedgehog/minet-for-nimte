@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=MINET
+Name[zh_CN]=宁波材料所网关登录
+Comment=MINET Online 
+Comment[zh_CN]=宁波材料所网关登录
+Exec=minet-gui
+Terminal=false
+Type=Application
+Icon=/usr/share/icons/minet.png
+Categories=Application;Network;
