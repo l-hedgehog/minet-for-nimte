@@ -1,8 +1,8 @@
-=== 0.1-NOT Released ===
-2009.07.28 Hector Zhao <zhaobt@nimte.ac.cn>
-	* minet (minet.py) works fine except query.
-    * minet-gui now work too.
-    * not sure if windows installer works.
+=== 0.1-1 ===
+2009.07.30 Hector Zhao <zhaobt@nimte.ac.cn>
+	* minet (minet.py) works fine except 'minet query'.
+	* minet-gui works.
+	* windows installer works.
 
 === 1.3-1 ===
 2009.02.11 Wenbo Yang <http://solrex.cn>

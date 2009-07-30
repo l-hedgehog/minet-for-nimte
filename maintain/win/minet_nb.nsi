@@ -41,7 +41,7 @@ var ICONS_GROUP
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
 !define MUI_FINISHPAGE_RUN "$INSTDIR\minet-gui.exe"
-!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\docs\README_CN.txt"
+;!define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\docs\README_CN.txt"
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller pages
@@ -64,6 +64,11 @@ Function .onInit
 FunctionEnd
 
 Section "MainSection" SEC01
+  SetOverwrite try
+  SetOutPath "$INSTDIR"
+  File "dist\atk.pyd"
+  File "dist\bz2.pyd"
+  File "dist\cairo._cairo.pyd"
   SetOutPath "$INSTDIR\docs"
   File "dist\docs\licence.txt"
   File "dist\docs\README_CN.txt"
@@ -74,6 +79,9 @@ Section "MainSection" SEC01
   SetOutPath "$INSTDIR\etc\pango"
   File "dist\etc\pango\pango.aliases"
   File "dist\etc\pango\pango.modules"
+  SetOutPath "$INSTDIR"
+  File "dist\gobject._gobject.pyd"
+  File "dist\gtk._gtk.pyd"
   SetOutPath "$INSTDIR\lib\gtk-2.0\2.10.0\engines"
   File "dist\lib\gtk-2.0\2.10.0\engines\libwimp.dll"
   SetOutPath "$INSTDIR\lib\gtk-2.0\2.10.0\loaders"
@@ -81,8 +89,24 @@ Section "MainSection" SEC01
   SetOutPath "$INSTDIR\lib\gtk-2.0\modules"
   File "dist\lib\gtk-2.0\modules\libgail.dll"
   SetOutPath "$INSTDIR"
+  File "dist\libatk-1.0-0.dll"
+  File "dist\libcairo-2.dll"
+  File "dist\libgdk-win32-2.0-0.dll"
+  File "dist\libgdk_pixbuf-2.0-0.dll"
+  File "dist\libgio-2.0-0.dll"
+  File "dist\libglib-2.0-0.dll"
+  File "dist\libgmodule-2.0-0.dll"
+  File "dist\libgobject-2.0-0.dll"
+  File "dist\libgthread-2.0-0.dll"
+  File "dist\libgtk-win32-2.0-0.dll"
+  File "dist\libpango-1.0-0.dll"
+  File "dist\libpangocairo-1.0-0.dll"
+  File "dist\libpangowin32-1.0-0.dll"
+  File "dist\libpng12-0.dll"
   File "dist\library.zip"
   File "dist\minet-gui.exe"
+  File "dist\pango.pyd"
+  File "dist\pangocairo.pyd"
   SetOutPath "$INSTDIR\pics"
   File "dist\pics\minet.png"
   File "dist\pics\offline.png"
@@ -91,6 +115,11 @@ Section "MainSection" SEC01
   File "dist\python25.dll"
   SetOutPath "$INSTDIR\share\themes\MS-Windows\gtk-2.0"
   File "dist\share\themes\MS-Windows\gtk-2.0\gtkrc"
+  SetOutPath "$INSTDIR"
+  File "dist\unicodedata.pyd"
+  File "dist\zlib1.dll"
+  File "dist\_socket.pyd"
+  File "dist\_ssl.pyd"
 
 ; Shortcuts
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
@@ -130,18 +159,40 @@ FunctionEnd
 
 Section Uninstall
   !insertmacro MUI_STARTMENU_GETFOLDER "Application" $ICONS_GROUP
+  Delete "$INSTDIR\_ssl.pyd"
+  Delete "$INSTDIR\_socket.pyd"
+  Delete "$INSTDIR\zlib1.dll"
   Delete "$INSTDIR\uninst.exe"
+  Delete "$INSTDIR\unicodedata.pyd"
   Delete "$INSTDIR\share\themes\MS-Windows\gtk-2.0\gtkrc"
   Delete "$INSTDIR\python25.dll"
   Delete "$INSTDIR\pics\online.png"
   Delete "$INSTDIR\pics\offline.png"
   Delete "$INSTDIR\pics\minet.png"
+  Delete "$INSTDIR\pangocairo.pyd"
+  Delete "$INSTDIR\pango.pyd"
   Delete "$INSTDIR\minet-gui.exe.log"
   Delete "$INSTDIR\minet-gui.exe"
   Delete "$INSTDIR\library.zip"
+  Delete "$INSTDIR\libpng12-0.dll"
+  Delete "$INSTDIR\libpangowin32-1.0-0.dll"
+  Delete "$INSTDIR\libpangocairo-1.0-0.dll"
+  Delete "$INSTDIR\libpango-1.0-0.dll"
+  Delete "$INSTDIR\libgtk-win32-2.0-0.dll"
+  Delete "$INSTDIR\libgthread-2.0-0.dll"
+  Delete "$INSTDIR\libgobject-2.0-0.dll"
+  Delete "$INSTDIR\libgmodule-2.0-0.dll"
+  Delete "$INSTDIR\libglib-2.0-0.dll"
+  Delete "$INSTDIR\libgio-2.0-0.dll"
+  Delete "$INSTDIR\libgdk_pixbuf-2.0-0.dll"
+  Delete "$INSTDIR\libgdk-win32-2.0-0.dll"
+  Delete "$INSTDIR\libcairo-2.dll"
+  Delete "$INSTDIR\libatk-1.0-0.dll"
   Delete "$INSTDIR\lib\gtk-2.0\modules\libgail.dll"
   Delete "$INSTDIR\lib\gtk-2.0\2.10.0\loaders\libpixbufloader-png.dll"
   Delete "$INSTDIR\lib\gtk-2.0\2.10.0\engines\libwimp.dll"
+  Delete "$INSTDIR\gtk._gtk.pyd"
+  Delete "$INSTDIR\gobject._gobject.pyd"
   Delete "$INSTDIR\etc\pango\pango.modules"
   Delete "$INSTDIR\etc\pango\pango.aliases"
   Delete "$INSTDIR\etc\gtk-2.0\gtkrc"
@@ -149,6 +200,9 @@ Section Uninstall
   Delete "$INSTDIR\docs\TODO.txt"
   Delete "$INSTDIR\docs\README_CN.txt"
   Delete "$INSTDIR\docs\licence.txt"
+  Delete "$INSTDIR\cairo._cairo.pyd"
+  Delete "$INSTDIR\bz2.pyd"
+  Delete "$INSTDIR\atk.pyd"
 
   Delete "$SMPROGRAMS\$ICONS_GROUP\Uninstall.lnk"
   Delete "$DESKTOP\MINET.lnk"

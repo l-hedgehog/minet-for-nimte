@@ -17,11 +17,15 @@ setup(
               'py2exe': {
                 'packages': 'encodings',
                 'includes': 'cairo, pango, atk, pangocairo, gobject',
-                'bundle_files': 1,
+                #'bundle_files': 2,
               }
             },
 
-  data_files=[],
+  data_files=[('pics',
+               ['pics/minet.png', 'pics/online.png', 'pics/offline.png']),
+              ('docs',
+               ['docs/licence.txt', 'docs/README_CN.txt', 'docs/TODO.txt']),
+             ],
   
-  zipfile=None
+  #zipfile=None
 )

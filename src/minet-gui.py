@@ -46,8 +46,6 @@ class MINETGui:
   mode_rb = []
   # Status used as a signal. 0: offline, 1: online, -1: quit
   status = 0
-  # Back groud thread object.
-  ar_thread = None
 
   # Helper function for pop up a simple dialog window.
   def pop_dialog(self, title, data):
@@ -63,7 +61,7 @@ class MINETGui:
 
   # Show help dialog window.
   def help(self, widget, data=None):
-    help_str = '''MINET 0.1 (20090728)
+    help_str = '''MINET 0.1 (20090730)
 Copyright (C) 2008 Wenbo Yang <solrex@gmail.com>
 Copyright (C) 2009 Hector Zhao <zhaobt@nimte.ac.cn>
 \n　　MINET 是宁波材料所 IP 控制网关登录客户端，基于中科院研究生
@@ -115,13 +113,22 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     return True
 
   def close_app(self, widget, data=None):
+    # Get account information.
+    minetconf.ops['-u'] = self.account[0]
+    minetconf.ops['-p'] = self.account[1]
+    minetconf.ops['-r'] = self.account[2]
+    minetconf.ops['-a'] = self.account[3]
+    # Store account information to account file.
+    minetconf.write_ops()
+
     self.status = -1
     gtk.main_quit()
     return False
 
-  def stat(self, widget, data=None):
+  def stat(self, widget):
     #(ret, retstr) = minet.query()
-    (ret, retstr) = (data, '流量查询功能尚未实现')
+    self.status = 1 if minet.connect(self.account)[1] == 'Currently online.' else 0
+    (ret, retstr) = (self.status, '流量查询功能尚未实现')
     if ret == True:
       stat_str = '''
 %s
@@ -155,12 +162,6 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     # Get account information.
     self.account[0] = self.e_user.get_text()
     self.account[1] = self.e_passwd.get_text()
-    minetconf.ops['-u'] = self.account[0]
-    minetconf.ops['-p'] = self.account[1]
-    minetconf.ops['-r'] = self.account[2]
-    minetconf.ops['-a'] = self.account[3]
-    # Store account information to account file.
-    minetconf.write_ops()
     # Connect
     (ret, retstr) = minet.connect(self.account)
     if ret == False:
@@ -170,11 +171,9 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     (ret, retstr) = minet.online(self.account)
     if ret == False:
       self.pop_dialog('连线错误', retstr)
-      self.status = 0
       return False
-    self.status = 1
     # Get account statistics information.
-    self.stat(None, True)
+    self.stat(None)
     self.b_offline.set_active(False)
     return True
 
@@ -182,7 +181,6 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     if widget != None:
       if widget.get_active() == False:
         return True
-    self.status = 0
     (ret, retstr) = minet.connect(self.account)
     if ret == False:
       self.pop_dialog('网关错误', retstr)
@@ -191,7 +189,7 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     if ret == False:
       self.pop_dialog('离线错误', retstr)
       return False
-    self.stat(None, False)
+    self.stat(None)
     self.e_user.set_editable(True)
     self.e_passwd.set_editable(True)
     self.b_online.set_active(False)
@@ -364,9 +362,11 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
 
     main_vbox.show()
     self.window.show()
+
+    self.stat(None)
    
     # Auto login. 
-    if self.account[3] == '1' and len(self.account[1]) > 0:
+    if self.account[3] == '1' and len(self.account[1]) > 0 and not self.status:
       self.b_online.clicked()
 
     if self.window.is_active() == False:

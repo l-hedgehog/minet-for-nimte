@@ -73,11 +73,11 @@ def connect(account):
     if res_loc.find('cgireadylogout') != -1:
       session = res_loc.split('=')[1]
       conn_info.insert(1, session)
-      return (True, 'Currently online, will go offline.')
+      return (True, 'Currently online.')
     elif res_loc == 'http://192.168.192.1:80/founderbnLogin.html':
       session = ''
       conn_info.insert(1, session)
-      return (True, 'Currently offline, will go online.')
+      return (True, 'Currently offline.')
     else:
       return (False, 'Unknown error!')
   else:

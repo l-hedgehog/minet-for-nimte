@@ -52,7 +52,6 @@ MINET 是宁波材料所 IP 控制网关登录客户端，基于中科院研究�
     或者在终端中输入 minet-gui
 
 ==== Windows ====
-    * Pygtk installed: 直接双击运行 minet-gui.vbe 或者从命令行运行 `python minet-gui.py'
     * Stand alone: 安装后运行 minet-gui.exe
 
 ===== BUG 报告 =====
