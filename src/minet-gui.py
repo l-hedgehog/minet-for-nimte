@@ -61,7 +61,7 @@ class MINETGui:
 
   # Show help dialog window.
   def help(self, widget, data=None):
-    help_str = '''MINET 0.1 (20090730)
+    help_str = '''MINET 0.1 (20090731)
 Copyright (C) 2008 Wenbo Yang <solrex@gmail.com>
 Copyright (C) 2009 Hector Zhao <zhaobt@nimte.ac.cn>
 \n　　MINET 是宁波材料所 IP 控制网关登录客户端，基于中科院研究生
@@ -96,7 +96,10 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
   def pop_menu(self, widget, button, time, data=None):
     if data:
       data.show_all()
-      data.popup(None, None, gtk.status_icon_position_menu, 3, time, widget)
+      if sys.platform == 'win32':
+        data.popup(None, None, None, 3, time)
+      else:
+        data.popup(None, None, gtk.status_icon_position_menu, 3, time, widget)
     return True
 
   def callback_cb(self, widget, data=None):
@@ -153,7 +156,7 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     return True
 
   def online(self, widget, data=None):
-    if widget != None:
+    if widget == self.b_online:
       if widget.get_active() == False:
         return True
     # Disable changing username and passwd before login.
@@ -167,6 +170,10 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     if ret == False:
       self.pop_dialog('网关错误', retstr)
       return False
+    if retstr == 'Currently online.':
+      self.pop_dialog('提示', '已经连线了，不要重复连线\n')
+      self.b_online.set_active(False)
+      return False
     # Online
     (ret, retstr) = minet.online(self.account)
     if ret == False:
@@ -174,16 +181,20 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
       return False
     # Get account statistics information.
     self.stat(None)
-    self.b_offline.set_active(False)
+    self.b_online.set_active(False)
     return True
 
   def offline(self, widget, data=None):
-    if widget != None:
+    if widget == self.b_offline:
       if widget.get_active() == False:
         return True
     (ret, retstr) = minet.connect(self.account)
     if ret == False:
       self.pop_dialog('网关错误', retstr)
+      return False
+    if retstr == 'Currently offline.':
+      self.pop_dialog('提示', '已经离线了，不要重复离线\n')
+      self.b_offline.set_active(False)
       return False
     (ret, retstr) = minet.offline(self.account)
     if ret == False:
@@ -192,7 +203,7 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     self.stat(None)
     self.e_user.set_editable(True)
     self.e_passwd.set_editable(True)
-    self.b_online.set_active(False)
+    self.b_offline.set_active(False)
     return True
 
   def __init__(self):
