@@ -11,12 +11,12 @@ install: $(SRCS)
 	# Creating directories
 	@install -v -d $(PREFIX)/share/minet/pics/
 	@install -v -d $(PREFIX)/share/applications/
-	@install -v -d $(PREFIX)/share/icons
+	@install -v -d $(PREFIX)/share/icons/hicolor/32x32/apps/
 	@install -v -d $(PREFIX)/bin
 	# Copying files to dest dir
 	@install -v src/*.py $(PREFIX)/share/minet/
 	@install -v -m 644 src/pics/* $(PREFIX)/share/minet/pics/
-	@install -v -m 644 src/pics/minet.png $(PREFIX)/share/icons/
+	@install -v -m 644 src/pics/minet.png $(PREFIX)/share/icons/hicolor/32x32/apps/
 	@install -v -m 644 misc/minet.desktop $(PREFIX)/share/applications/
 	# Creating links to *.py
 	cd $(PREFIX)/bin; \
@@ -30,7 +30,7 @@ uninstall:
 	@rm -vf $(PREFIX)/bin/minet*
 	@rm -rvf $(PREFIX)/share/minet
 	@rm -vf $(PREFIX)/share/applications/minet.desktop
-	@rm -vf $(PREFIX)/share/icons/minet.png
+	@rm -vf $(PREFIX)/share/icons/hicolor/32x32/apps/minet.png
 
 clean:
 	@rm -f *.pyc *.log
