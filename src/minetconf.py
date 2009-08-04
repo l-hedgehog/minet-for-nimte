@@ -52,7 +52,7 @@ Examples:
 Configure file is saved in ~/.minet/account, use "minetconf --show"
 to view your account setting.
 
-MINET 0.1 by Hector Zhao <zhaobt@nimte.ac.cn>
+MINET 0.2 by Hector Zhao <zhaobt@nimte.ac.cn>
 '''
   sys.exit(0)
 

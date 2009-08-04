@@ -1,3 +1,8 @@
+=== 0.2-1 ===
+2009.08.04 Hector Zhao <zhaobt@nimte.ac.cn>
+	* query (i.e. statistics) now works
+	* but only in gui.
+
 === 0.1-1 ===
 2009.07.31 Hector Zhao <zhaobt@nimte.ac.cn>
 	* minet (minet.py) works fine except 'minet query'.
