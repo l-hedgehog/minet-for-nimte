@@ -24,7 +24,7 @@ setup(
   data_files=[('pics',
                ['pics/minet.png', 'pics/online.png', 'pics/offline.png']),
               ('docs',
-               ['docs/licence.txt', 'docs/README_CN.txt', 'docs/TODO.txt']),
+               ['docs/licence.txt', 'docs/README_CN.txt']),
              ],
   
   #zipfile=None
