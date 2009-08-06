@@ -42,7 +42,7 @@ class MINETGui:
   account = ['', '', '1', '0']
 
   stat_str = '''
-流量信息不可用
+请先连线再查询流量信息
   '''
   # Status used as a signal. 0: offline, 1: online, -1: quit
   status = 0
@@ -271,14 +271,14 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
                '</td>\s+</tr>\s+</table>')
       stat = re.search(regex, res_html, re.S)
       if stat:
-        return (True, '共 %s MB: %s MB↓\t%s MB↑' % stat.groups())
+        return (True, '%s MB = %s MB↓ + %s MB↑' % stat.groups())
       else:
         return (True, '流量信息不可用')
     else:
       if self.status:
         return (True, '请点击“刷新”以获取流量信息')
       else:
-        return (self.status, '流量信息不可用')
+        return (False, '请先连线再查询流量信息')
 
   def __init__(self):
     # Find minet icons path.

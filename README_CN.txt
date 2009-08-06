@@ -56,5 +56,5 @@ MINET 是宁波材料所 IP 控制网关登录客户端，基于中科院研究�
 
 ===== BUG 报告 =====
 
-如果您在使用中发现 BUG，请将 BUG 提交到 http://( not currently )
+如果您在使用中发现 BUG，请将 BUG 提交到 <zhaobt@nimte.ac.cn>
 非常感谢！
