@@ -1,3 +1,8 @@
+=== 0.2-2 ===
+2009.08.07 Hector Zhao <zhaobt@nimte.ac.cn>
+	* add jpeg62.dll to windows installer
+	* thanks to http://code.google.com/p/takenote/issues/detail?id=1
+
 === 0.2-1 ===
 2009.08.04 Hector Zhao <zhaobt@nimte.ac.cn>
 	* query (i.e. statistics) now works
