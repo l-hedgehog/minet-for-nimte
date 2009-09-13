@@ -43,6 +43,7 @@ class MINETGui:
 
   stat_str = '''
 请先连线再查询流量信息
+
   '''
   # Status used as a signal. 0: offline, 1: online, -1: quit
   status = 0
@@ -61,7 +62,7 @@ class MINETGui:
 
   # Show help dialog window.
   def help(self, widget, data=None):
-    help_str = '''MINET 0.2 (20090804)
+    help_str = '''MINET 0.2.1 (20090913)
 Copyright (C) 2008 Wenbo Yang <solrex@gmail.com>
 Copyright (C) 2009 Hector Zhao <zhaobt@nimte.ac.cn>
 \n　　MINET 是宁波材料所 IP 控制网关登录客户端，基于中科院研究生
@@ -164,8 +165,8 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     # Get account information.
     self.account[0] = self.e_user.get_text()
     self.account[1] = self.e_passwd.get_text()
-    # Connect
-    (ret, retstr) = minet.connect(self.account)
+    # Query
+    (ret, retstr) = minet.query(self.account)
     if ret == False:
       self.pop_dialog('网关错误', retstr)
       return False
@@ -187,7 +188,7 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     if widget == self.b_offline:
       if widget.get_active() == False:
         return True
-    (ret, retstr) = minet.connect(self.account)
+    (ret, retstr) = minet.query(self.account)
     if ret == False:
       self.pop_dialog('网关错误', retstr)
       return False
@@ -206,7 +207,7 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     return True
 
   def query(self, stat):
-    self.status = 1 if minet.connect(self.account)[1] == 'Currently online.' else 0
+    self.status = 1 if minet.query(self.account)[1] == 'Currently online.' else 0
     if self.status and stat:
       conn = httplib.HTTPConnection('192.168.254.110')
       try:
@@ -271,14 +272,14 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
                '</td>\s+</tr>\s+</table>')
       stat = re.search(regex, res_html, re.S)
       if stat:
-        return (True, '%s MB = %s MB↓ + %s MB↑' % stat.groups())
+        return (True, '截至本次连线前：\n%s MB = %s MB↓ + %s MB↑' % stat.groups())
       else:
-        return (True, '流量信息不可用')
+        return (True, '流量信息不可用\n')
     else:
       if self.status:
-        return (True, '请点击“刷新”以获取流量信息')
+        return (True, '请点击“刷新”以获取流量信息\n')
       else:
-        return (False, '请先连线再查询流量信息')
+        return (False, '请先连线再查询流量信息\n')
 
   def __init__(self):
     # Find minet icons path.

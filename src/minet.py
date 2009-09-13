@@ -33,12 +33,13 @@ conn_info = []
 
 # Display helper information.
 def usage():
-  print '''Useage: minet [options]
+  conn_info[0].close()
+  print '''Usage: minet [options]
 Options:
   [None]\tPrint this message
   on\t\tToggle online/offline
   off\t\tSame as "on"
-  query\t\tOnly available in GUI
+  query\t\tQuery the current status (online/offline)
   --help\tPrint this message
 
 Examples:
@@ -48,11 +49,11 @@ Examples:
 *NOTE*: Before use "minet", you must configure your account with
         "minetconf" command. 
 
-MINET 0.2 by Hector Zhao <zhaobt@nimte.ac.cn>
+MINET 0.2.1 by Hector Zhao <zhaobt@nimte.ac.cn>
 '''
   sys.exit(0)
 
-def connect(account):
+def query(account):
   if len(conn_info) == 0:
     conn = httplib.HTTPConnection('192.168.192.1')
     conn_info.insert(0, conn)
@@ -131,11 +132,13 @@ def main(account=[], verbose=True):
 
   #Global settings
   result = ''
-  ret, retstr = connect(account);
+  ret, retstr = query(account);
   if(ret == False):
     result += retstr;
   else:
     if len(sys.argv) == 1:
+      usage()
+    elif sys.argv[1] == '--help':
       usage()
     elif sys.argv[1] == 'on':
       ret, retstr = online(account)
@@ -144,10 +147,10 @@ def main(account=[], verbose=True):
       ret, retstr = offline(account)
       result += '\n' + retstr
     elif(sys.argv[1] == 'query'):
-      result += 'Only available in GUI'
+      ret, retstr = query(account)
+      result += '\n' + retstr
     else:
       if verbose:
-        conn_info[0].close()
         print 'Unknow option!'
         usage()
       else:
