@@ -49,7 +49,7 @@ Examples:
 *NOTE*: Before use "minet", you must configure your account with
         "minetconf" command. 
 
-MINET 0.2.1 by Hector Zhao <zhaobt@nimte.ac.cn>
+MINET 0.2.2 by Hector Zhao <zhaobt@nimte.ac.cn>
 '''
   sys.exit(0)
 

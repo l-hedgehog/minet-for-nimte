@@ -1,3 +1,8 @@
+=== 0.2.2-1 ===
+2009.10.23 Hector Zhao <zhaobt@nimte.ac.cn>
+	* add a newline
+	* update version in windows nsi
+
 === 0.2.1-1 ===
 2009.09.13 Hector Zhao <zhaobt@nimte.ac.cn>
 	* 'minet query' works, but only online status

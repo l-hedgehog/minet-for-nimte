@@ -62,7 +62,7 @@ class MINETGui:
 
   # Show help dialog window.
   def help(self, widget, data=None):
-    help_str = '''MINET 0.2.1 (20090913)
+    help_str = '''MINET 0.2.2 (20091023)
 Copyright (C) 2008 Wenbo Yang <solrex@gmail.com>
 Copyright (C) 2009 Hector Zhao <zhaobt@nimte.ac.cn>
 \n　　MINET 是宁波材料所 IP 控制网关登录客户端，基于中科院研究生
@@ -258,7 +258,7 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
 
       aid = re.search('accountId=(\d{3})', res_html)
       if not aid:
-        return (True, '验证码输入错误')
+        return (True, '验证码输入错误\n')
       headers = {'Host':'192.168.254.110','User-Agent':'minet_python',
                  'Cookie':cookie}
       conn.request('GET', '/selfUserInfo.do?action=viewUseSum&accountId=%s' % aid.groups()[0], data, headers)
