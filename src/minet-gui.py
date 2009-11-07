@@ -165,19 +165,18 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     # Get account information.
     self.account[0] = self.e_user.get_text()
     self.account[1] = self.e_passwd.get_text()
-    # Query
-    (ret, retstr) = minet.query(self.account)
+    # Connect
+    (ret, retstr) = minet.connect()
     if ret == False:
       self.pop_dialog('网关错误', retstr)
-      return False
-    if retstr == 'Currently online.':
-      self.pop_dialog('提示', '已经连线了，不要重复连线\n')
-      self.b_online.set_active(False)
       return False
     # Online
     (ret, retstr) = minet.online(self.account)
     if ret == False:
       self.pop_dialog('连线错误', retstr)
+      self.e_user.set_editable(True)
+      self.e_passwd.set_editable(True)
+      self.b_online.set_active(False)
       return False
     # Get account statistics information.
     self.stat(None)
@@ -188,15 +187,11 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     if widget == self.b_offline:
       if widget.get_active() == False:
         return True
-    (ret, retstr) = minet.query(self.account)
+    (ret, retstr) = minet.connect()
     if ret == False:
       self.pop_dialog('网关错误', retstr)
       return False
-    if retstr == 'Currently offline.':
-      self.pop_dialog('提示', '已经离线了，不要重复离线\n')
-      self.b_offline.set_active(False)
-      return False
-    (ret, retstr) = minet.offline(self.account)
+    (ret, retstr) = minet.offline()
     if ret == False:
       self.pop_dialog('离线错误', retstr)
       return False
@@ -207,7 +202,8 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     return True
 
   def query(self, stat):
-    self.status = 1 if minet.query(self.account)[1] == 'Currently online.' else 0
+    minet.connect()
+    self.status = 1 if minet.query()[1] == 'Currently online.' else 0
     if self.status and stat:
       conn = httplib.HTTPConnection('192.168.254.110')
       try:

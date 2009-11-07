@@ -23,6 +23,7 @@
 """
 
 import httplib
+import re
 import sys
 import socket
 import urllib
@@ -53,77 +54,72 @@ MINET 0.2.2 by Hector Zhao <zhaobt@nimte.ac.cn>
 '''
   sys.exit(0)
 
-def query(account):
+def connect():
   if len(conn_info) == 0:
-    conn = httplib.HTTPConnection('192.168.192.1')
+    conn = httplib.HTTPConnection('192.168.254.100')
     conn_info.insert(0, conn)
   else:
     conn = conn_info[0]
   try:
     conn.connect()
   except socket.error:
-    return (False, 'Socket error. Please check your network connection.')  
-  headers = {'Host':'192.168.192.1','User-Agent':'minet_python'}
-  conn.request('GET','/cgi-bin/cgiipauth', None, headers)
+    return (False, 'Socket error. Please check your network connection.')
+  return (True, 'Socket OK!')
+
+def query():
+  conn = conn_info[0]
+  headers = {'Host':'192.168.254.100','User-Agent':'minet_python'}
+  conn.request('GET','/', None, headers)
   res = conn.getresponse()
-  res.read()
-  if res.status == 302:
-    res_loc = res.getheader('location')
-    if res_loc.find('cgireadylogout') != -1:
-      session = res_loc.split('=')[1]
-      conn_info.insert(1, session)
-      return (True, 'Currently online.')
-    elif res_loc == 'http://192.168.192.1:80/founderbnLogin.html':
-      session = ''
-      conn_info.insert(1, session)
-      return (True, 'Currently offline.')
-    else:
-      return (False, 'Unknown error!')
+  res = res.read().decode('gbk').encode('utf8')
+  if res.find('请您确认要注销') != -1:
+    return (True, 'Currently online.')
+  elif res.find('请输入您的帐号和密码') != -1:
+    return (True, 'Currently offline.')
   else:
-    return (False, 'Not a 302 response!')
+    return (False, 'Unknown error!')
 
 #Global functions
 def online(account):
   conn = conn_info[0]
-  session = conn_info[1]
-  if not session:
-    data = 'UserName=%s&PassWord=%s&IDType=1' % (account[0],account[1])
-    headers = {'Host':'192.168.192.1','User-Agent':'minet_python',
-               'Content-Length':str(len(data)),
-               'Content-Type':'application/x-www-form-urlencoded'}
-    conn.request('POST','/cgi-bin/cgilogin', data, headers)
-    res=conn.getresponse()
-    res.read()
-    if res.status == 302:
-      res_loc = res.getheader('location')
-      if res_loc.find('cgiportal') != -1:
-        return (True, 'Online succeeded.')
-      elif res_loc.find('cgifault') != -1:
-        fault = urllib.unquote(res_loc.split('=')[1]).decode('gbk')
-        return (False, fault)
+  data = 'DDDDD=%s&upass=%s&0MKKey=登录 Login' % (account[0],account[1])
+  headers = {'Host':'192.168.254.100','User-Agent':'minet_python',
+             'Content-Length':str(len(data)),
+             'Content-Type':'application/x-www-form-urlencoded'}
+  conn.request('POST','/', data, headers)
+  res = conn.getresponse()
+  res = res.read().decode('gbk').encode('utf8')
+  if res.find('您已经成功登录') != -1:
+    return (True, 'Online succeeded.')
+  elif res.find('DispTFM') != -1:
+    msg = re.search('Msg=(\d{2})', res)
+    msga = re.search('msga=\'(\w?)\'', res)
+    if msg and msga:
+      msg = str(int(msg.groups()[0]))
+      msga = msga.groups()[0]
+      if msga:
+        emsg = re.search('\s\'%s\':\s*document\.write\("(.*?)".*?\);' % msga, res, re.S)
+      elif msg == '1':        
+        emsg = re.search('else\sdocument\.write\("(.*?)".*?\);', res, re.S)
       else:
-        return (False, 'Unknown online error!')
-    else:
-      return (False, 'Not a 302 response!')
+        emsg = re.search('\s%s:\s*document\.write\("(.*?)".*?\);' % msg, res, re.S)
+      if emsg:
+        emsg = emsg.groups()[0]
+        return (False, emsg)
+    return (False, 'Unknown error!')
   else:
-    headers = {'Host':'192.168.192.1','User-Agent':'minet_python'}
-    conn.request('GET','/cgi-bin/cgilogout?SessionID=%s' % session, None, headers)
-    res = conn.getresponse()
-    res.read()
-    if res.status == 302:
-      res_loc = res.getheader('location')
-      if res_loc.find('deletesession') != -1:
-        return (True, 'Offline succeeded.')
-      elif res_loc.find('cgifault') != -1:
-        fault = urllib.unquote(res_loc.split('=')[1]).decode('gbk')
-        return (False, fault)
-      else:
-        return (False, 'Unknown offline error!')
-    else:
-      return (False, 'Not a 302 response!')
+    return (False, 'Unknown error!')
 
-def offline(account):
-  return online(account)
+def offline():
+  conn = conn_info[0] 
+  headers = {'Host':'192.168.254.100','User-Agent':'minet_python'}
+  conn.request('GET','/F', None, headers)
+  res = conn.getresponse()
+  res = res.read().decode('gbk').encode('utf8')
+  if res.find('注销成功') != -1:
+    return (True, 'Offline succeeded.')
+  else:
+    return (False, 'Unknown error!')
 
 def main(account=[], verbose=True):
   if len(account) != 4:
@@ -132,7 +128,7 @@ def main(account=[], verbose=True):
 
   #Global settings
   result = ''
-  ret, retstr = query(account);
+  ret, retstr = connect();
   if(ret == False):
     result += retstr;
   else:
@@ -144,10 +140,10 @@ def main(account=[], verbose=True):
       ret, retstr = online(account)
       result += '\n' + retstr
     elif(sys.argv[1] == 'off'):
-      ret, retstr = offline(account)
+      ret, retstr = offline()
       result += '\n' + retstr
     elif(sys.argv[1] == 'query'):
-      ret, retstr = query(account)
+      ret, retstr = query()
       result += '\n' + retstr
     else:
       if verbose:
