@@ -22,9 +22,7 @@
  --------------------------------------------------------------------------
 """
 
-import httplib
 import os
-import re
 import sys
 from os import path
 
@@ -43,7 +41,6 @@ class MINETGui:
 
   stat_str = '''
 请先连线再查询流量信息
-
   '''
   # Status used as a signal. 0: offline, 1: online, -1: quit
   status = 0
@@ -62,7 +59,7 @@ class MINETGui:
 
   # Show help dialog window.
   def help(self, widget, data=None):
-    help_str = '''MINET 0.2.2 (20091023)
+    help_str = '''MINET 0.3 (20091207)
 Copyright (C) 2008 Wenbo Yang <solrex@gmail.com>
 Copyright (C) 2009 Hector Zhao <zhaobt@nimte.ac.cn>
 \n　　MINET 是宁波材料所 IP 控制网关登录客户端，基于中科院研究生
@@ -129,12 +126,13 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     gtk.main_quit()
     return False
 
-  def stat(self, widget, data=None):
-    #(ret, retstr) = minet.query()
-    (ret, retstr) = self.query(data)
+  def query(self, widget, data=None):
+    minet.connect()
+    (ret, retstr) = minet.query()
     if ret == True:
+      self.status = 1
       stat_str = '''
-%s
+当前流量：%s
 ''' % retstr
       self.stat_frame.set_label("当前状态：已连线")
       self.stat_label.set_text(stat_str)
@@ -179,7 +177,7 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
       self.b_online.set_active(False)
       return False
     # Get account statistics information.
-    self.stat(None)
+    self.query(None)
     self.b_online.set_active(False)
     return True
 
@@ -195,87 +193,11 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     if ret == False:
       self.pop_dialog('离线错误', retstr)
       return False
-    self.stat(None)
+    self.query(None)
     self.e_user.set_editable(True)
     self.e_passwd.set_editable(True)
     self.b_offline.set_active(False)
     return True
-
-  def query(self, stat):
-    minet.connect()
-    self.status = 1 if minet.query()[1] == 'Currently online.' else 0
-    if self.status and stat:
-      conn = httplib.HTTPConnection('192.168.254.110')
-      try:
-        conn.connect()
-      except socket.error:
-        return (False, 'Socket error. Please check your network connection.')  
-      headers = {'Host':'192.168.254.110','User-Agent':'minet_python'}
-      conn.request('GET','/page/selfservice/login.jsp', None, headers)
-      res = conn.getresponse()
-      res.read()
-      cookie = res.getheader('Set-Cookie').split(';')[0] 
-      headers = {'Host':'192.168.254.110','User-Agent':'minet_python',
-                 'Cookie':cookie,
-                 'Referer':'http://192.168.254.110/page/selfservice/login.jsp'}
-      conn.request('GET','/page/selfservice/include/image.jsp', None, headers)
-      res = conn.getresponse()
-      data = res.read()
-      loader = gtk.gdk.PixbufLoader()
-      loader.write(data)
-      loader.close()
-
-      dialog = gtk.Dialog('验证码', None, gtk.DIALOG_NO_SEPARATOR, (gtk.STOCK_OK, gtk.RESPONSE_OK))
-      dialog.set_icon_from_file(os.path.join(self.iconpath, 'minet.png'))
-      dialog.set_border_width(10)
-      dialog.set_position(gtk.WIN_POS_CENTER_ALWAYS)
-      dialog.set_default_response(gtk.RESPONSE_OK)
-      image = gtk.Image()
-      image.set_from_pixbuf(loader.get_pixbuf())
-      dialog.vbox.pack_start(image, True, True, 0)
-      image.show()
-      captcha = gtk.Entry()
-      captcha.set_max_length(4)
-      captcha.set_activates_default(True)
-      dialog.vbox.pack_start(captcha, True, True, 0)
-      captcha.show()
-      if dialog.run() == gtk.RESPONSE_OK:
-        rand = captcha.get_text()
-      dialog.destroy()
-
-      data = 'loginName=%s&password=%s&rand=%s' % (self.account[0],self.account[1],rand)
-      headers = {'Host':'192.168.254.110','User-Agent':'minet_python',
-                 'Content-Length':str(len(data)),
-                 'Content-Type':'application/x-www-form-urlencoded',
-                 'Cookie':cookie}
-      conn.request('POST','/selflogin.do', data, headers)
-      res = conn.getresponse()
-      res_html = res.read()
-
-      aid = re.search('accountId=(\d{3})', res_html)
-      if not aid:
-        return (True, '验证码输入错误\n')
-      headers = {'Host':'192.168.254.110','User-Agent':'minet_python',
-                 'Cookie':cookie}
-      conn.request('GET', '/selfUserInfo.do?action=viewUseSum&accountId=%s' % aid.groups()[0], data, headers)
-      res = conn.getresponse()
-      res_html = res.read().decode('gbk').encode('utf8')
-      regex = ('<td  bgcolor="#FFFFFF">&nbsp;([\d\.]+) M\n</td>\s+'
-               '<td  bgcolor="#FFFFFF">&nbsp;([\d\.]+) M\n</td>\s+'
-               '<td  bgcolor="#FFFFFF">&nbsp;([\d\.]+) M\n</td>\s+'
-               '<td  bgcolor="#FFFFFF">&nbsp;[\d]+</td>\s+<td  bgcolor="#FFFFFF">&nbsp;'
-               '<a href="/selfUserInfo\.do\?action=viewUseDetail&accountId=\d+&year=\d+&month=\d+">查看详情</a>'
-               '</td>\s+</tr>\s+</table>')
-      stat = re.search(regex, res_html, re.S)
-      if stat:
-        return (True, '截至本次连线前：\n%s MB = %s MB↓ + %s MB↑' % stat.groups())
-      else:
-        return (True, '流量信息不可用\n')
-    else:
-      if self.status:
-        return (True, '请点击“刷新”以获取流量信息\n')
-      else:
-        return (False, '请先连线再查询流量信息\n')
 
   def __init__(self):
     # Find minet icons path.
@@ -320,7 +242,7 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     bbox.set_border_width(10)
     main_vbox.pack_start(bbox, True, True, 0)
     b_stat = gtk.Button('刷新')
-    b_stat.connect('clicked', self.stat, True)
+    b_stat.connect('clicked', self.query, None)
     bbox.add(b_stat)
     b_stat.show()
 
@@ -419,7 +341,7 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     menu_item.connect('activate', self.online, None)
     p_menu.append(menu_item)
     menu_item = gtk.MenuItem('  刷新')
-    menu_item.connect('activate', self.stat, True)
+    menu_item.connect('activate', self.query, None)
     p_menu.append(menu_item)
     menu_item = gtk.MenuItem('  离线')
     menu_item.connect('activate', self.offline, None)
@@ -445,7 +367,7 @@ Python 语言写成，同时支持命令行和图形界面，使用简单，安�
     main_vbox.show()
     self.window.show()
 
-    self.stat(None)
+    self.query(None)
    
     # Auto login. 
     if self.account[3] == '1' and len(self.account[1]) > 0 and not self.status:

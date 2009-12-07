@@ -23,6 +23,7 @@
 """
 
 import httplib
+import math
 import re
 import sys
 import socket
@@ -50,7 +51,7 @@ Examples:
 *NOTE*: Before use "minet", you must configure your account with
         "minetconf" command. 
 
-MINET 0.2.2 by Hector Zhao <zhaobt@nimte.ac.cn>
+MINET 0.3 by Hector Zhao <zhaobt@nimte.ac.cn>
 '''
   sys.exit(0)
 
@@ -73,9 +74,14 @@ def query():
   res = conn.getresponse()
   res = res.read().decode('gbk').encode('utf8')
   if res.find('请您确认要注销') != -1:
-    return (True, 'Currently online.')
+    flow = re.search('flow=\'(\d*)\s*\'', res, re.S)
+    if flow:
+      flow = flow.groups()[0]
+      flow = math.floor(float(flow) / 1.024)
+      flow = flow / 1000.0
+    return (True, '%s MB' % flow)
   elif res.find('请输入您的帐号和密码') != -1:
-    return (True, 'Currently offline.')
+    return (False, 'Currently offline.')
   else:
     return (False, 'Unknown error!')
 
@@ -139,9 +145,13 @@ def main(account=[], verbose=True):
     elif sys.argv[1] == 'on':
       ret, retstr = online(account)
       result += '\n' + retstr
+      ret, retstr = query()
+      result += '\n\n' + retstr
     elif(sys.argv[1] == 'off'):
-      ret, retstr = offline()
+      ret, retstr = query()
       result += '\n' + retstr
+      ret, retstr = offline()
+      result += '\n\n' + retstr
     elif(sys.argv[1] == 'query'):
       ret, retstr = query()
       result += '\n' + retstr
