@@ -4,7 +4,7 @@ import py2exe
 setup(
   name = 'minet-gui',
   description = 'MINET',
-  version = '0.1',
+  version = '0.3',
 
   windows = [
               {
