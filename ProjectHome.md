@@ -1,0 +1,1 @@
+This is IP Gateway Client for Ningbo Institute of Materials Technology & Engineering, and it is based on solrex's [casnet](http://code.google.com/p/casnet/) for GUCAS.
